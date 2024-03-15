@@ -3,7 +3,6 @@ import "./styles/score-board.css";
 
 export class ClassScoreBoard extends Component {
   render() {
-
     const { correctCount, incorrectCount, answersLeft } = this.props;
 
     return (
