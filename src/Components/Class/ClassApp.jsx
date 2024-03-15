@@ -2,57 +2,61 @@ import { Component } from "react";
 import { ClassScoreBoard } from "./ClassScoreBoard";
 import { ClassGameBoard } from "./ClassGameBoard";
 import { ClassFinalScore } from "./ClassFinalScore";
+import { initialFishes } from "../../data";
 
 export class ClassApp extends Component {
-
   state = {
     incorrectCount: 0,
     correctCount: 0,
-    inputValue: "",
-    answersLeft: ["trout", "salmon", "tuna", "shark"],
-    totalCount: 0,
   };
 
-  setCorrectCount = (updateFunction) => {
-    this.setState((prevState) => ({ correctCount: updateFunction(prevState.correctCount) }));
+  updateState = (key, value) => {
+    this.setState({ [key]: value });
   };
 
-  setIncorrectCount = (updateFunction) => {
-    this.setState((prevState) => ({ incorrectCount: updateFunction(prevState.incorrectCount) }));
+  setCorrectCount = (value) => {
+    this.updateState("correctCount", value);
   };
 
-  setAnswersLeft = (updateFunction) => {
-    this.setState((prevState) => ({ answersLeft: updateFunction(prevState.answersLeft) }));
-  };
-
-  setTotalCount = (updateFunction) => {
-    this.setState((prevState) => ({ totalCount: updateFunction(prevState.totalCount) }));
+  setIncorrectCount = (value) => {
+    this.updateState("incorrectCount", value);
   };
 
   render() {
-
-    const guessesRemaining = this.state.answersLeft.length !== 0;
-    const allGuessesMade = this.state.answersLeft.length === 0;
+    const currentFishIndex =
+      this.state.correctCount + this.state.incorrectCount;
+    const answersLeft = initialFishes
+      .map((fish) => fish.name)
+      .slice(currentFishIndex);
+    const totalCount = this.state.correctCount + this.state.incorrectCount;
+    const allGuessesMade = answersLeft.length === 0;
 
     return (
       <>
         <>
-          {guessesRemaining && <ClassScoreBoard
-          correctCount={this.state.correctCount}
-          incorrectCount={this.state.incorrectCount}
-          answersLeft={this.state.answersLeft}
-          />}
-          {guessesRemaining && <ClassGameBoard
-          setCorrectCount={this.setCorrectCount}
-          setIncorrectCount={this.setIncorrectCount}
-          setAnswersLeft={this.setAnswersLeft}
-          setTotalCount={this.setTotalCount}
-          />}
+          {!allGuessesMade && (
+            <>
+              <ClassScoreBoard
+                correctCount={this.state.correctCount}
+                incorrectCount={this.state.incorrectCount}
+                answersLeft={answersLeft}
+              />
+              <ClassGameBoard
+                correctCount={this.state.correctCount}
+                incorrectCount={this.state.incorrectCount}
+                setCorrectCount={this.setCorrectCount}
+                setIncorrectCount={this.setIncorrectCount}
+                currentFishIndex={currentFishIndex}
+              />
+            </>
+          )}
         </>
-        {allGuessesMade && <ClassFinalScore
-        correctCount={this.state.correctCount}
-        totalCount={this.state.totalCount}
-        />}
+        {allGuessesMade && (
+          <ClassFinalScore
+            correctCount={this.state.correctCount}
+            totalCount={totalCount}
+          />
+        )}
       </>
     );
   }

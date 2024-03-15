@@ -1,38 +1,25 @@
 import "./styles/game-board.css";
-import { Images } from "../../assets/Images";
 import { useState } from "react";
+import { initialFishes } from "../../data";
 
-const initialFishes = [
-  {
-    name: "trout",
-    url: Images.trout,
-  },
-  {
-    name: "salmon",
-    url: Images.salmon,
-  },
-  {
-    name: "tuna",
-    url: Images.tuna,
-  },
-  {
-    name: "shark",
-    url: Images.shark,
-  },
-];
-
-export function FunctionalGameBoard({ setCorrectCount, setIncorrectCount, setAnswersLeft, setTotalCount}) {
+export function FunctionalGameBoard({
+  setCorrectCount,
+  setIncorrectCount,
+  currentFishIndex,
+}) {
   const [inputValue, setInputValue] = useState("");
-  const [currentFishIndex, setCurrentFishIndex] = useState(0);
   const nextFishToName = initialFishes[currentFishIndex];
+
+  const handelAnswer = (answer) => {
+    answer.toLowerCase() === nextFishToName.name.toLowerCase()
+      ? setCorrectCount((prev) => prev + 1)
+      : setIncorrectCount((prev) => prev + 1);
+  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    inputValue.toLowerCase() === nextFishToName.name ? setCorrectCount((prev) => prev + 1) : setIncorrectCount((prev) => prev + 1);
-    setAnswersLeft((remainingAnswers) => remainingAnswers.slice(1));
+    handelAnswer(inputValue);
     setInputValue("");
-    setCurrentFishIndex((currentFishIndex + 1) % initialFishes.length);
-    setTotalCount((prev) => prev + 1);
   };
 
   return (
@@ -46,7 +33,8 @@ export function FunctionalGameBoard({ setCorrectCount, setIncorrectCount, setAns
           type="text"
           name="fish-guess"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)} />
+          onChange={(e) => setInputValue(e.target.value)}
+        />
         <input type="submit" />
       </form>
     </div>
